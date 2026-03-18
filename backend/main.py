@@ -1,12 +1,18 @@
 import logging
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 import os
+from sqlalchemy.orm import Session
 
 # Import core modules
 from app.core.logging_config import configure_logging
 from app.core.middleware.logging_middleware import LoggingMiddleware
 from app.core.middleware.error_handling_middleware import ErrorHandlingMiddleware
+from config.database import get_db, engine
+from config.logger import app_logger as logger
+from models import user, office, slot, booking
+from services.booking_service import BookingService
 
 # Import routes
 from app.modules.health.health_controller import router as health_router
@@ -20,7 +26,11 @@ configure_logging(
     log_dir=log_dir
 )
 
-logger = logging.getLogger(__name__)
+# Create tables
+user.Base.metadata.create_all(bind=engine)
+office.Base.metadata.create_all(bind=engine)
+slot.Base.metadata.create_all(bind=engine)
+booking.Base.metadata.create_all(bind=engine)
 
 # Create FastAPI app
 app = FastAPI(
@@ -46,6 +56,24 @@ app.add_middleware(ErrorHandlingMiddleware)
 app.include_router(health_router, prefix="/api")
 # Register other routers here
 
+@app.get("/")
+def read_root():
+    return {"message": "Passport Booking System API"}
+
+@app.get("/health")
+def health_check():
+    try:
+        # Verify database connection
+        db = next(get_db())
+        db.execute("SELECT 1")
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Service unhealthy: {str(e)}"
+        )
+
 @app.on_event("startup")
 async def startup_event():
     logger.info("Application starting up")
@@ -57,7 +85,6 @@ async def shutdown_event():
     # Add any cleanup code here
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
