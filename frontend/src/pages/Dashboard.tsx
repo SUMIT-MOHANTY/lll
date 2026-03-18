@@ -16,8 +16,13 @@ import {
 } from '@chakra-ui/react';
 import SlotSearch from '../components/Dashboard/SlotSearch';
 import SlotList from '../components/Dashboard/SlotList';
-import { searchSlots, ISlot, IPaginatedResponse, createBooking } from '../services/api';
+import { searchSlots, ISlot, IPaginatedResponse, createBooking, getOffices } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+
+interface Location {
+  id: string;
+  name: string;
+}
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -25,6 +30,7 @@ const Dashboard: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [slots, setSlots] = useState<ISlot[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [pagination, setPagination] = useState({
     total: 0,
     limit: 20,
@@ -35,9 +41,20 @@ const Dashboard: React.FC = () => {
   const [searchParams, setSearchParams] = useState({});
   const [selectedSlot, setSelectedSlot] = useState<ISlot | null>(null);
   const [isBooking, setIsBooking] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
 
-  // Load slots when component mounts or search params change
+  // Load offices and slots when component mounts
   useEffect(() => {
+    const fetchOffices = async () => {
+      try {
+        const officeData = await getOffices();
+        setLocations(officeData);
+      } catch (err) {
+        setError('Failed to load office locations. Please try again later.');
+      }
+    };
+
+    fetchOffices();
     loadSlots(searchParams);
   }, [searchParams.location, searchParams.date, searchParams.available, pagination.offset]);
 
@@ -54,6 +71,7 @@ const Dashboard: React.FC = () => {
 
       setSlots(response.data);
       setPagination(response.pagination);
+      setPage(Math.floor(pagination.offset / pagination.limit) + 1);
     } catch (err) {
       setError('Failed to load appointment slots. Please try again later.');
       console.error(err);
@@ -135,6 +153,7 @@ const Dashboard: React.FC = () => {
       <SlotSearch
         onSearch={handleSearch}
         isLoading={isLoading}
+        locations={locations}
       />
 
       <SlotList
