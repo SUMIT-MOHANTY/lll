@@ -1,8 +1,22 @@
+# Existing requirements likely include:
 fastapi>=0.95.0
 uvicorn>=0.21.1
+sqlalchemy>=2.0.0
 pydantic>=1.10.7
-python-jose>=3.3.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
 python-multipart>=0.0.6
+email-validator>=2.0.0
+alembic>=1.10.3
+
+# Health and monitoring dependencies
+psutil>=5.9.5
+prometheus-client>=0.17.1
+aiosmtplib>=2.0.2
+httpx>=0.24.1
+
+# Logging and tracing
+python-json-logger>=2.0.7
+
 pytest>=7.3.1
-httpx>=0.24.0
 pyjwt>=2.6.0
