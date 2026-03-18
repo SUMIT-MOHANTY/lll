@@ -1,0 +1,111 @@
+/* Appointment Card Styles */
+.appointment-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.appointment-card:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+  transform: translateY(-2px);
+}
+
+.appointment-card--selected {
+  border-color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.appointment-card--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.appointment-card--error {
+  border-color: #f44336;
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+.appointment-card__date {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.appointment-card__time {
+  color: #666;
+}
+
+.appointment-card__office {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+.appointment-card__availability {
+  margin-top: 10px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+/* Dashboard Styles */
+.dashboard {
+  padding: 20px;
+}
+
+.dashboard__title {
+  margin-bottom: 20px;
+}
+
+.dashboard__filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard__slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.dashboard__loading,
+.dashboard__error,
+.dashboard__empty {
+  text-align: center;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.dashboard__error {
+  color: #f44336;
+}
+
+.dashboard__selected-slot {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #3d8b40;
+}
